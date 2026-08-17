@@ -1,44 +1,76 @@
-# ASVault v2 — AI Coding Assistant
+# ASVault v2
 
-A desktop AI coding assistant. Double-click to run. Works offline with local GGUF models or online with API keys.
+A desktop AI coding assistant built with Python and CustomTkinter. Runs fully offline with local GGUF models, or online via API keys (OpenAI, Anthropic, Gemini). Distributed as a single-file EXE via PyInstaller.
 
-## Quick Start
+🔗 **Website:** https://asvault-six.vercel.app/
 
-### Option A — Run from source
-1. Double-click `install.bat` (installs everything automatically)
-2. Drop your `.gguf` model file into the `models/` folder
-3. Run: `python main.py`
+## Overview
 
-### Option B — Build a single .exe
-1. Run `install.bat` first
-2. Double-click `build_exe.bat`
-3. Your EXE will be at `dist/ASVault_v2.exe` — share just that file!
+ASVault gives you a 4-panel coding assistant GUI — file browser, chat, code viewer, and terminal — all in one window. The AI can act directly on your files and terminal using structured XML tags, making it agentic rather than just conversational.
 
-## Adding Online Models (Optional)
-Edit `keys.json` and add your API keys:
-```json
-{
-  "openai": "sk-...",
-  "anthropic": "sk-ant-...",
-  "gemini": "AIza..."
-}
+## Features
+
+- **Offline-first** — runs 100% locally with GGUF models via `llama-cpp-python`, no internet required
+- **Also supports online models** — OpenAI, Anthropic, and Gemini via API keys
+- **Agentic actions** — the AI can create, edit, delete, and search files, and run terminal commands directly
+- **4-panel layout** — file tree, chat, syntax-highlighted code viewer, and embedded terminal, all visible at once
+- **GPU acceleration** — CUDA support via `llama-cpp-python` (abetlen's prebuilt wheels)
+- **One-click setup** — `install.bat` installs dependencies and creates required folders
+- **Single EXE build** — `build_exe.bat` produces a standalone `dist/ASVault_v2.exe`
+
+## Architecture
+
+| File | Purpose |
+|---|---|
+| `main.py` | Entry point — orchestrates all modules, background model loading |
+| `ui.py` | 4-panel CustomTkinter GUI: File Browser / Chat / Code Viewer (top), Terminal (bottom) |
+| `chat_engine.py` | Conversation history, prompt building, XML tag parsing |
+| `action_executor.py` | Dispatches parsed tags to file/terminal handlers |
+| `model_manager.py` | Loads local GGUF (llama-cpp) or API models, with lazy imports |
+| `file_io.py` | Core file ops — create/read/edit/delete/search files, create/move/copy folders |
+| `file_manager.py` | Directory browsing, file/content search, context file selection for the AI |
+| `terminal.py` | Embedded terminal widget with command history, `cd` support, 30s timeout |
+| `code_viewer.py` | Syntax-highlighted viewer (Python/JS/HTML/CSS/JSON/MD) with zoom |
+
+## Action Tags
+
+The AI executes actions through structured tags in its responses:
+
+```xml
+<create_file path="file.py">content</create_file>
+<edit_file path="file.py">search->replace</edit_file>
+<read_file path="file.py"/>
+<delete_file path="file.py"/>
+<search_file path="file.py" pattern="term"/>
+<create_folder path="folder"/>
+<run_command>python test.py</run_command>
 ```
 
-## Folder Structure
+## Setup & Usage
+
+```bash
+# Setup — installs deps, creates models/ config/ workspace/
+install.bat
+
+# Run from source — place a .gguf model in models/ first
+python main.py
+
+# Build a standalone EXE
+build_exe.bat        # outputs dist/ASVault_v2.exe
 ```
-ASVault_v2/
-├── main.py              # Entry point
-├── ui.py                # 4-panel GUI
-├── chat_engine.py       # AI chat + tag parsing
-├── action_executor.py   # Executes AI actions
-├── model_manager.py     # Local + API model support
-├── file_manager.py      # File browser logic
-├── file_io.py           # File operations
-├── code_viewer.py       # Syntax highlighted viewer
-├── terminal.py          # Embedded terminal
-├── config.py            # Settings
-├── keys.json            # API keys (gitignored)
-├── models/              # Place .gguf files here
-├── install.bat          # One-click setup
-└── build_exe.bat        # One-click EXE builder
-```
+
+## Configuration
+
+- `config/settings.json` — UI/theme, model parameters (context length, temperature, GPU layers)
+- `keys.json` (gitignored) — API keys for OpenAI/Anthropic/Gemini, only needed for online models
+- Local models are auto-detected from the `models/` folder
+
+**Note:** `keys.json` is gitignored — never commit real API keys to this repo.
+
+## License
+
+*(Add your license here — e.g. MIT, or "All rights reserved" if you don't want redistribution/modification.)*
+
+## Contributing
+
+Issues and pull requests are welcome. All changes go through review before merging.
