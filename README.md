@@ -69,7 +69,7 @@ build_exe.bat        # outputs dist/ASVault_v2.exe
 
 ## License
 
-*(Add your license here — e.g. MIT, or "All rights reserved" if you don't want redistribution/modification.)*
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
